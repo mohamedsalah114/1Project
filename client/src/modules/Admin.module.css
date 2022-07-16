@@ -1,0 +1,25 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    margin: 50px auto;
+    padding: 30px;
+}
+
+h4 {
+    margin-top: 15px;
+}
+
+select, input {
+    appearance: none;
+    background-color: transparent;
+    border: #d3c8c8 1px solid;
+    border-radius: 5px;
+    padding: 5px 5px 5px 5px;
+    margin: 0;
+    width: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    line-height: inherit;
+    box-sizing: border-box;
+}

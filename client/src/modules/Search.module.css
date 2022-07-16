@@ -1,0 +1,28 @@
+.cover{
+    background-position: center center !important;
+    background-size: cover !important;
+    height: 600px;
+}
+
+.input, .cover{
+    border-radius: 25px;
+}
+
+.searchBar{
+    display: flex;
+    justify-content: space-between;
+    width: 50%;
+    margin: 150px auto auto;
+}
+
+.input{
+    width: 75%;
+    height: 45px;
+    background-color: #d1d1d1;
+}
+
+.button{
+    width: 20%;
+    height: 45px;
+    border-radius: 25px;
+}

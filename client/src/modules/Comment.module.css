@@ -1,0 +1,24 @@
+.form{
+    border: #515156 1px solid;
+    margin-bottom: 100px;
+    display: flex;
+    justify-content: space-around;
+    padding: 30px;
+}
+
+.interface{
+}
+
+.textarea{
+    width: 400px;
+    height: 150px;
+}
+
+.message{
+    width: 400px;
+    margin-top: 10px;
+}
+
+.messages{
+    margin-top: 50px;
+}
