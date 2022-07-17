@@ -5,8 +5,6 @@ import moduleStyle from "../modules/Search.module.css";
 import NationalityBar from "./NationalityBar";
 import {observer} from "mobx-react-lite";
 import {Context} from "../index";
-import {fetchIngridients} from "../http/dishAPI";
-import * as mobx from "mobx";
 
 
 const Search = observer(() => {
@@ -22,29 +20,16 @@ const Search = observer(() => {
         }}>
             <Form className="d-flex flex-column">
                 <Row className={moduleStyle.searchBar}>
-                    <select className={moduleStyle.input} value={dish.ingridientSearch} onChange={(e) => dish.setIngridientSearch(e.target.value)} >
-                        {        array.map(i =>
+                    <input className={moduleStyle.input} list="ingredients-choice" id="ingredients"
+                           onChange={(e) => dish.setIngridientSearch(e.target.value)}
+                    />
+                    <datalist id="ingredients-choice">
+                        {
+                            array.map(i =>
                             <option value={i.id} onClick={() => dish.setSelectedIngridient(i.id)}
-                                    key={i.id}>{i.title}</option>
-                        )}
-                    </select>
-                    {/*<input className={moduleStyle.input}*/}
-                    {/*       value={dish.ingridientSearch}*/}
-                    {/*       list="ingredient"*/}
-                    {/*       placeholder="Ингредиент"*/}
-                    {/*       onChange={(e) => dish.setIngridientSearch(e.target.value)}/>*/}
-                    {/*<datalist id="ingredient">*/}
-                    {/*    /!*{*!/*/}
-                    {/*        array.map(i =>*/}
-                    {/*            <option value={i.id} onClick={() => dish.setSelectedIngridient(i.id)}*/}
-                    {/*                    key={i.id}>{i.title}</option>*/}
-                    {/*        )*/}
-                    {/*    /!*}*!/*/}
-                    {/*</datalist>*/}
-                    {/*<Form.Control value={dish.ingridientSearch}*/}
-                    {/*              onChange={(e) => dish.setIngridientSearch(e.target.value)}*/}
-                    {/*              className={moduleStyle.input} style={{borderRadius: '25px'}}*/}
-                    {/*              placeholder="Поиск по рецептам"/>*/}
+                                    key={i.id}>{i.title}</option>)
+                        }
+                    </datalist>
                     <Button className={moduleStyle.button} variant="primary"
                             onClick={() => dish.setSelectedIngridientSearch(dish.ingridientSearch)}>Найти</Button>
                 </Row>
