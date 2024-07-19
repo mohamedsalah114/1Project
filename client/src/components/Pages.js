@@ -1,11 +1,11 @@
-import React, {useContext} from 'react';
-import {observer} from "mobx-react-lite";
-import {Context} from "../index";
-import {Pagination} from "react-bootstrap";
+import React, { useContext } from 'react';
+import { observer } from "mobx-react-lite";
+import { Context } from "../index";
+import { Pagination } from "react-bootstrap";
 
 const Pages = observer(() => {
-    const {dish} = useContext(Context)
-    const pagesCount = Math.ceil(dish.totalCount / dish.limit )
+    const { course } = useContext(Context)
+    const pagesCount = Math.ceil(course.totalCount / course.limit)
     const pages = []
 
     for (let i = 0; i < pagesCount; i++) {
@@ -17,8 +17,8 @@ const Pages = observer(() => {
             {pages.map(page =>
                 <Pagination.Item
                     key={page}
-                    active={dish.page === page}
-                    onClick={() => dish.setPage(page)}
+                    active={course.page === page}
+                    onClick={() => course.setPage(page)}
                 >
                     {page}
                 </Pagination.Item>

@@ -1,23 +1,25 @@
-import React, {useContext} from 'react';
-import {Switch, Route, Redirect} from 'react-router-dom'
-import {authRoutes, publicRoutes} from "../routes";
-import {CATALOG_ROUTE} from "../utils/const";
-import {Context} from "../index";
-import {observer} from "mobx-react-lite";
+import React, { useContext } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { authRoutes, publicRoutes } from "../routes";
+import { CATALOG_ROUTE } from "../utils/const";
+import { Context } from "../index";
+import { observer } from "mobx-react-lite";
+
 
 const AppRouter = observer(() => {
-    const {user} = useContext(Context)
+    const { user } = useContext(Context);
+
 
     return (
-        <Switch>
-            {user.isAuth && authRoutes.map(({path, Component}) =>
-                <Route key={path} path={path} component={Component} exact/>
-            )}
-            {publicRoutes.map(({path, Component}) =>
-                <Route key={path} path={path} component={Component} exact/>
-            )}
-            <Redirect to={CATALOG_ROUTE}/>
-        </Switch>
+        <Routes>
+            {user.isAuth && authRoutes.map(({ path, Component }) => (
+                <Route key={path} path={path} element={<Component />} />
+            ))}
+            {publicRoutes.map(({ path, Component }) => (
+                <Route key={path} path={path} element={<Component />} />
+            ))}
+            <Route path="*" element={<Navigate to={CATALOG_ROUTE} />} />
+        </Routes>
     );
 });
 

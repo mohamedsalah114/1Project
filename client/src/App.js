@@ -1,14 +1,14 @@
-import {BrowserRouter} from "react-router-dom";
-import React, {useContext, useEffect, useState} from "react";
+import { BrowserRouter } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
 import AppRouter from "./components/AppRouter";
 import NavBar from "./components/NavBar";
-import {observer} from "mobx-react-lite";
-import {check} from "./http/userAPI";
-import {Spinner} from "react-bootstrap";
-import {Context} from "./index";
+import { observer } from "mobx-react-lite";
+import { check } from "./http/userAPI";
+import { Spinner } from "react-bootstrap";
+import { Context } from "./index";
 
 const App = observer(() => {
-  const {user} = useContext(Context)
+  const { user } = useContext(Context)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -19,14 +19,16 @@ const App = observer(() => {
   }, [])
 
   if (loading) {
-    return <Spinner animation={"grow"}/>
+    return <Spinner animation={"grow"} />
   }
 
   return (
+    <>
       <BrowserRouter>
-        <NavBar/>
-        <AppRouter/>
+        <NavBar />
+        <AppRouter />
       </BrowserRouter>
+    </>
   );
 });
 

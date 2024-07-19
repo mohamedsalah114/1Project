@@ -1,57 +1,51 @@
-import React, {useContext, useEffect} from 'react';
-import {Button, Col, Container, Row} from "react-bootstrap";
+import React, { useContext, useEffect } from 'react';
+import { Button, Col, Container, Row } from "react-bootstrap";
 import CategoryBar from "../components/CategoryBar";
-import {observer} from "mobx-react-lite";
-import {Context} from "../index";
-import {fetchCategory, fetchDishes, fetchIngridients, fetchNationality, fetchSpecialGroup} from "../http/dishAPI";
-import SpecialGroupBar from "../components/SpecialGroupBar";
-import DishList from "../components/DishList";
-import Search from "../components/Search";
+import { observer } from "mobx-react-lite";
+import { Context } from "../index";
+import { fetchCategories, fetchCourses, fetchLanguages, fetchTeachers } from "../http/courseAPI";
+import LanguageBar from "../components/LanguageBar";
+import CourseList from "../components/CourseList";
 import Pages from "../components/Pages";
 
 const Catalog = observer(() => {
-    const {dish} = useContext(Context)
+    const { course } = useContext(Context);
 
     useEffect(() => {
-        fetchCategory().then(data => dish.setCategories(data))
-        fetchNationality().then(data => dish.setNationalities(data))
-        fetchSpecialGroup().then(data => dish.setSpecialGroup(data))
-        fetchIngridients().then(data => dish.setIngridient(data))
-    }, [])
+        fetchCategories().then(data => course.setCategories(data));
+        fetchLanguages().then(data => course.setLanguages(data));
+    }, [course]);
 
     useEffect(() => {
-        fetchDishes(dish.selectedCategory.id, dish.selectedNationality.id, dish.selectedSpecialGroup.id, dish.selectedIngridientSearch, dish.page, 8).then(data => {
-            dish.setDish(data)
-            dish.setTotalCount(data.length)
-        })
-    }, [dish.page, dish.selectedCategory, dish.selectedNationality, dish.selectedSpecialGroup, dish.selectedIngridientSearch])
+        fetchCourses(course.selectedCategory.id, course.selectedLanguage.id, course.selectedTeacher.id, course.page, 8).then(data => {
+            course.setCourses(data);
+            course.setTotalCount(data.length);
+        });
+    }, [course.page, course.selectedCategory, course.selectedLanguage, course.selectedTeacher]);
 
     const clean = () => {
-        if (!dish.selectedIngridientSearch){
-            dish.setSelectedCategory('*')
-            dish.setSelectedSpecialGroup('*')
-            dish.setSelectedNationality('*')
+        if (!course.selectedSearch) {
+            course.setSelectedCategory('*');
+            course.setSelectedLanguage('*');
+            course.setSelectedTeacher('*');
         } else {
-            window.location.reload()
+            window.location.reload();
         }
     }
 
     return (
         <Container>
             <Row className="mt-3">
-                <Search/>
-            </Row>
-            <Row className="mt-3">
                 <Col md={9}>
-                    <DishList/>
+                    <CourseList />
                 </Col>
                 <Col md={3}>
-                    <CategoryBar/>
-                    <SpecialGroupBar className="mt-3"/>
+                    <CategoryBar />
+                    <LanguageBar className="mt-3" />
                     <Button className="mt-3" variant="outline-danger" onClick={clean}>Очистить</Button>
                 </Col>
             </Row>
-            <Pages/>
+            <Pages />
         </Container>
     );
 });

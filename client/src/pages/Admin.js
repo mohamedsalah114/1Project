@@ -1,94 +1,64 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Button, Dropdown, Form, Row, Col} from "react-bootstrap";
-import {Context} from "../index";
+import React, { useContext, useEffect, useState } from 'react';
+import { Button, Dropdown, Form } from "react-bootstrap";
+import { Context } from "../index";
 import moduleStyle from "../modules/Admin.module.css"
 import {
-    createDish,
-    fetchCategory,
-    fetchIngridients,
-    fetchMeaSure,
-    fetchNationality,
-    fetchSpecialGroup
-} from "../http/dishAPI";
-import {observer} from "mobx-react-lite";
-import jwt_decode from "jwt-decode";
-import {forEach} from "react-bootstrap/ElementChildren";
-
+    createCourse,
+    fetchCategories,
+    fetchLanguages,
+    fetchTeachers
+} from "../http/courseAPI";
+import { useNavigate } from "react-router-dom";
+import { CATALOG_ROUTE } from "../utils/const";
+import { observer } from "mobx-react-lite";
+import { jwtDecode as jwt_decode } from 'jwt-decode';
 
 const Admin = observer(() => {
-    const {dish} = useContext(Context)
-    const [title, setTitle] = useState('')
-    const [cookingTime, setCookingTime] = useState(0)
-    const [description, setDescription] = useState('')
-    const [info, setInfo] = useState([])
-    const [file, setFile] = useState(null)
+    const { course } = useContext(Context);
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [info, setInfo] = useState([]);
+    const [file, setFile] = useState(null);
+    const [price, setPrice] = useState(0);
 
-    let token = localStorage.getItem(localStorage.key(0))
-    let userId = token
+    let token = localStorage.getItem('token');
+    let userId = jwt_decode(token).id;
+
+    const navigate = useNavigate()
 
     useEffect(() => {
-        fetchCategory().then(data => dish.setCategories(data))
-        fetchNationality().then(data => dish.setNationalities(data))
-        fetchSpecialGroup().then(data => dish.setSpecialGroup(data))
-        fetchMeaSure().then(data => dish.setMeaSure(data))
-        fetchIngridients().then(data => dish.setIngridient(data))
-    }, [])
-
-    console.log(dish.ingridients)
-
-    const addInfo = () => {
-        setInfo([...info, {ingridient_id: 0, amount: 0, measure_id: 0, additionally: " ", number: Date.now()}])
-    }
-
-    const removeInfo = (number) => {
-        setInfo(info.filter(i => i.number !== number))
-    }
-
-    const changeInfo = (key, value, number) => {
-        setInfo(info.map(i => i.number === number ? {...i, [key]: value} : i))
-    }
+        fetchCategories().then(data => course.setCategories(data));
+        fetchLanguages().then(data => course.setLanguages(data));
+        fetchTeachers().then(data => course.setTeachers(data));
+    }, [course]);
 
     const selectFile = e => {
-        setFile(e.target.files[0])
-    }
+        setFile(e.target.files[0]);
+    };
 
-    const addDish = () => {
-
-        let composition = []
-        info.forEach(i =>
-            composition.push({
-                ingridient_id: i.ingridient_id,
-                amount: i.amount,
-                measure_id: i.measure_id,
-                additionally: i.additionally
-                }
-            )
-        )
-        console.log(composition)
-        const formData = new FormData()
-        formData.append('title', title)
-        formData.append('description', description)
-        formData.append('cooking_time', `${cookingTime}`)
-        formData.append('img', file)
-        formData.append('category_id', dish.selectedCategory.id)
-        formData.append('nationality_id', dish.selectedNationality.id)
-        formData.append('special_group_id', dish.selectedSpecialGroup.id)
-        formData.append('info', JSON.stringify(composition))
-        formData.append('user_id', userId)
-        createDish(formData).then(data => console.log(data[0]))
-    }
-
+    const addCourse = () => {
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('img', file);
+        formData.append('price', price);
+        formData.append('category_id', course.selectedCategory.id);
+        formData.append('language_id', course.selectedLanguage.id);
+        formData.append('teacher_id', userId);
+        createCourse(formData).then(data => console.log(data[0]));
+        navigate(CATALOG_ROUTE)
+    };
 
     return (
         <div className={moduleStyle.form}>
             <Form>
-                <h1>Добавление рецепта</h1>
+                <h1>Add Course</h1>
                 <Dropdown className="mt-2 mb-2">
-                    <Dropdown.Toggle>{dish.selectedCategory.title || "Выберите категорию"}</Dropdown.Toggle>
+                    <Dropdown.Toggle>{course.selectedCategory.title || "Select Category"}</Dropdown.Toggle>
                     <Dropdown.Menu>
-                        {dish.categories.map(category =>
+                        {course.categories.map(category =>
                             <Dropdown.Item
-                                onClick={() => dish.setSelectedCategory(category)}
+                                onClick={() => course.setSelectedCategory(category)}
                                 key={category.id}
                             >
                                 {category.title}
@@ -97,89 +67,30 @@ const Admin = observer(() => {
                     </Dropdown.Menu>
                 </Dropdown>
                 <Dropdown className="mt-2 mb-2">
-                    <Dropdown.Toggle>{dish.selectedNationality.name || "Выберите кухню"}</Dropdown.Toggle>
+                    <Dropdown.Toggle>{course.selectedLanguage.title || "Select Language"}</Dropdown.Toggle>
                     <Dropdown.Menu>
-                        {dish.nationalities.map(nationality =>
+                        {course.languages.map(language =>
                             <Dropdown.Item
-                                onClick={() => dish.setSelectedNationality(nationality)}
-                                key={nationality.id}
+                                onClick={() => course.setSelectedLanguage(language)}
+                                key={language.id}
                             >
-                                {nationality.name}
+                                {language.title}
                             </Dropdown.Item>
                         )}
                     </Dropdown.Menu>
                 </Dropdown>
-                <Dropdown className="mt-2 mb-2">
-                    <Dropdown.Toggle>{dish.selectedSpecialGroup.name || "Выберите назначение"}</Dropdown.Toggle>
-                    <Dropdown.Menu>
-                        {dish.specialGroup.map(specialGroup =>
-                            <Dropdown.Item
-                                onClick={() => dish.setSelectedSpecialGroup(specialGroup)}
-                                key={specialGroup.id}
-                            >
-                                {specialGroup.name}
-                            </Dropdown.Item>
-                        )}
-                    </Dropdown.Menu>
-                </Dropdown>
-                <h4>Название</h4>
-                <Form.Control value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Название блюда"/>
-                <h4>Инструкция приготовления</h4>
-                <Form.Control as="textarea" value={description} onChange={(e) => setDescription(e.target.value)}
-                              placeholder="Инструкция приготовления"/>
-                <h4>Время приготовления (мин)</h4>
-                <Form.Control value={cookingTime} onChange={(e) => setCookingTime(Number(e.target.value))}
-                              placeholder="Примерное время (мин)"/>
-                <hr/>
-                <h4>Фотография</h4>
-                <Form.Control onChange={selectFile} type="file"/>
-                <hr/>
-                {info.map(i =>
-                    <Row className="mt-4" key={i.number}>
-                        <Col md={3}>
-                            <input value={i.ingridient_id} list="ingridients" placeholder="Ингредиент"
-                                   onChange={(e) => changeInfo('ingridient_id', e.target.value, i.number)}/>
-                                <datalist id="ingridients">
-                                    {dish.ingridients.map(ingridient_id =>
-                                        <option value={ingridient_id.id} onClick={() => dish.setSelectedIngridient(ingridient_id)}
-                                                key={ingridient_id.id}>{ingridient_id.title}</option>)}
-                                </datalist>
-                        </Col>
-                        <Col md={1}>
-                            <Form.Control
-                                value={i.amount}
-                                onChange={(e) => changeInfo('amount', e.target.value, i.number)}
-                                placeholder="Кол-во"
-                            />
-                        </Col>
-                        <Col md={2}>
-                            <select value={i.measure_id} onChange={(e) => changeInfo('measure_id', e.target.value, i.number)}>
-                                {dish.measure_id.map(measure_id =>
-                                    <option value={measure_id.id} onClick={() => dish.setSelectedMeaSure(measure_id)}
-                                            key={measure_id.id}>{measure_id.title}</option>)}
-                            </select>
-                        </Col>
-                        <Col md={3}>
-                            <Form.Control
-                                value={i.additionally}
-                                onChange={(e) => changeInfo('additionally', e.target.value, i.number)}
-                                placeholder="Примечание"
-                            />
-                        </Col>
-                        <Col md={1}>
-                            <Button
-                                onClick={() => removeInfo(i.number)}
-                                variant={"outline-danger"}
-                            >
-                                ❌
-                            </Button>
-                        </Col>
-                    </Row>
-                )}
-                <Button className="mt-3" variant={"outline-dark"} onClick={addInfo}>Добавить
-                    ингридиент</Button>
+                <h4>Title</h4>
+                <Form.Control value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Course Title" />
+                <h4>Description</h4>
+                <Form.Control as="textarea" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Course Description" />
+                <h4>Price</h4>
+                <Form.Control value={price} onChange={(e) => setPrice(Number(e.target.value))} placeholder="Price" />
+                <hr />
+                <h4>Image</h4>
+                <Form.Control onChange={selectFile} type="file" />
+                <hr />
             </Form>
-            <Button className="mt-4" variant="outline-success" onClick={addDish}>Добавить</Button>
+            <Button className="mt-4" variant="outline-success" onClick={addCourse}>Add Course</Button>
         </div>
     );
 });

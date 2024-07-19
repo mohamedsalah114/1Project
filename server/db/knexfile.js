@@ -8,9 +8,9 @@ module.exports = {
   development: {
     client: 'postgresql',
     connection: {
-      host : 'localhost',
-      database: 'ramsay_database',
-      user:     'postgres',
+      host: 'localhost',
+      database: 'pro_english',
+      user: 'postgres',
       password: 'root',
     },
     pool: {

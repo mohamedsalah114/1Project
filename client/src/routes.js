@@ -1,8 +1,9 @@
-import {ADMIN_ROUTE, DISH_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE, CATALOG_ROUTE} from "./utils/const";
+import { ADMIN_ROUTE, COURSE_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE, CATALOG_ROUTE } from "./utils/const";
 import Admin from "./pages/Admin";
 import Catalog from "./pages/Catalog";
 import Auth from "./pages/Auth";
-import DishPage from "./pages/DishPage";
+import CoursePage from "./pages/CoursePage";
+
 
 export const authRoutes = [
     {
@@ -25,7 +26,7 @@ export const publicRoutes = [
         Component: Auth,
     },
     {
-        path: DISH_ROUTE + '/:id',
-        Component: DishPage,
-    },
+        path: COURSE_ROUTE + '/:id',
+        Component: CoursePage,
+    }
 ]
